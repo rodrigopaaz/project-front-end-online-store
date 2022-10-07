@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getCategories } from '../services/api';
+import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
 
 class SearchHome extends Component {
   constructor() {
@@ -8,6 +8,7 @@ class SearchHome extends Component {
     this.state = {
       searchValue: '',
       listItems: [],
+      listProducts: [],
     };
   }
 
@@ -18,6 +19,16 @@ class SearchHome extends Component {
   fetchCategoryList = async () => {
     const categoryList = await getCategories();
     this.setState({ listItems: categoryList });
+  };
+
+  handleSearchBtn = async () => {
+    const { searchValue } = this.state;
+    const getProducts = await
+    getProductsFromCategoryAndQuery('', searchValue);
+    this.setState({
+      listProducts: getProducts.results,
+    });
+    console.log(getProducts);
   };
 
   handleInput = (event) => {
@@ -32,7 +43,7 @@ class SearchHome extends Component {
   };
 
   render() {
-    const { searchValue, listItems } = this.state;
+    const { searchValue, listItems, listProducts } = this.state;
     return (
       <div>
         <label htmlFor="search">
@@ -42,8 +53,32 @@ class SearchHome extends Component {
             id="search"
             velue={ searchValue }
             onChange={ this.handleInput }
+            data-testid="query-input"
           />
         </label>
+        <button
+          data-testid="query-button"
+          type="button"
+          onClick={ this.handleSearchBtn }
+        >
+          Pesquisar
+
+        </button>
+        <div>
+          {listProducts.length === 0 ? <p>Nenhum produto foi encontrado</p>
+            : (
+
+              <div>
+                {listProducts.map((product, index) => (
+                  <div data-testid="product" key={ index }>
+                    <span>{product.title}</span>
+                    <img src={ product.thumbnail } alt="foto produto" />
+                    <span>{product.price}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+        </div>
         {searchValue.length <= 0
         && (
           <h4 data-testid="home-initial-message">
