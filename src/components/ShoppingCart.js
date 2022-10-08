@@ -11,8 +11,9 @@ class ShoppingCart extends React.Component {
   }
 
   getUniqueItems = () => {
-    const cart2 = getCart();
+    let cart2 = getCart();
     const lista = {};
+    cart2 = cart2 === null ? [] : cart2;
     cart2.forEach((element) => {
       if (lista[element.title] !== undefined) {
         lista[element.title] = {
