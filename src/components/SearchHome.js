@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getCategories, getProductsFromCategoryAndQuery, setCart } from '../services/api';
+import { getCategories, getProductsFromCategoryAndQuery,
+  setCart, getCart } from '../services/api';
 
 class SearchHome extends Component {
   constructor() {
@@ -15,6 +16,11 @@ class SearchHome extends Component {
 
   componentDidMount() {
     this.fetchCategoryList();
+    const listLocalStorage = getCart();
+    this.setState({
+      listCart: ((listLocalStorage !== null && listLocalStorage.length > 0)
+        ? listLocalStorage : []),
+    });
   }
 
   fetchCategoryList = async () => {
@@ -45,8 +51,8 @@ class SearchHome extends Component {
 
   redirect = () => {
     const { history } = this.props;
-    const { listCart } = this.state;
-    setCart(listCart);
+    // const { listCart } = this.state;
+    // setCart(listCart);
     history.push('/shoppingcart');
   };
 
@@ -59,22 +65,23 @@ class SearchHome extends Component {
   // Requisito 8 - Adiciona o produto ao state (listCart) pelo id (do produto) vindo do botão. Este
   // state poderá ser passado para o componente do carrinho com a finalidade de montar a ser exibida
   // dentro do componente (ShoppingCart).
-  addToCart = async (e) => {
+  addToCart = (e) => {
     const { target: { name } } = e;
-    const { title, price, thumbnail } = await this.mountCartProduct(name);
-    console.log(title);
-    console.log(price);
-    console.log(thumbnail);
-    this.setState((prevState) => (
-      { listCart: [...prevState.listCart, { name, title, price, thumbnail }] }
-    ));
+    const { title, price, thumbnail } = this.mountCartProduct(name);
+    const setLocalStorage = () => {
+      const { listCart } = this.state;
+      setCart(listCart);
+    };
+    this.setState((prev) => ({
+      listCart: [...prev.listCart, { name, title, price, thumbnail }],
+    }), setLocalStorage);
   };
 
   // Requisito 8 - Monta o objeto a ser inserido no estado, evitando nova requisição da api no carrinho.
   // Dessa forma, tem-se os dados do produto que precisam ser exibidos no carrinho dentro de um único
   // objeto a ser passado via props para o componente do carrinho. Faltando apenas computar a quantida
   // de do produto.
-  mountCartProduct = async (productId) => {
+  mountCartProduct = (productId) => {
     const { listProducts } = this.state;
     return listProducts.filter((product) => product.id === productId)[0];
   };

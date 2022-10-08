@@ -6,10 +6,24 @@ class ShoppingCart extends React.Component {
     cart: [],
   };
 
-  async componentDidMount() {
-    const cart = await getCart();
-    this.setState({ cart });
+  componentDidMount() {
+    this.setState({ cart: this.getUniqueItems() });
   }
+
+  getUniqueItems = () => {
+    const cart2 = getCart();
+    const lista = {};
+    cart2.forEach((element) => {
+      if (lista[element.title] !== undefined) {
+        lista[element.title] = {
+          ...element,
+          unit: lista[element.title].unit + 1 };
+      } else {
+        lista[element.title] = { ...element, unit: 1 };
+      }
+    });
+    return Object.values(lista);
+  };
 
   render() {
     const { cart } = this.state;
@@ -24,6 +38,9 @@ class ShoppingCart extends React.Component {
               <span data-testid="shopping-cart-product-name">{product.title}</span>
               <img src={ product.thumbnail } alt="foto produto" />
               <span>{ `R$ ${product.price}` }</span>
+              <span data-testid="shopping-cart-product-quantity">
+                { `Un: ${product.unit}` }
+              </span>
             </div>
           ))
           : <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>}

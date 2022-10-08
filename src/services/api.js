@@ -25,10 +25,10 @@ export async function getProductById(productId) {
   return result.json();
 }
 
-export async function setCart(cart) {
-  localStorage.setItem('cart', JSON.stringify(cart));
+export function getCart() {
+  return JSON.parse(localStorage.getItem('cart'));
 }
 
-export async function getCart() {
-  return JSON.parse(localStorage.getItem('cart'));
+export function setCart(cart) {
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
