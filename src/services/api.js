@@ -1,32 +1,34 @@
 export async function getCategories() {
   const categories = 'https://api.mercadolibre.com/sites/MLB/categories';
   const result = await fetch(categories);
-  const data = await result.json();
-  return data;
+  return result.json();
 }
 
 export async function getProductsFromCategoryAndQuery(categoryId, query) {
   if (categoryId && query === undefined) {
     const categoryIdAPI = `https://api.mercadolibre.com/sites/MLB/search?category=${categoryId}`;
     const result = await fetch(categoryIdAPI);
-    const data = await result.json();
-    console.log('result', result);
-    console.log('data', data);
-    return data;
+    return result.json();
   }
   if (query && categoryId === undefined) {
     const queryAPI = `https://api.mercadolibre.com/sites/MLB/search?q=${query}`;
     const result = await fetch(queryAPI);
-    const data = await result.json();
-    return data;
+    return result.json();
   }
   const queryAndCategoryAPI = `https://api.mercadolibre.com/sites/MLB/search?category=${categoryId}&q=${query}`;
   const result = await fetch(queryAndCategoryAPI);
-  const data = await result.json();
-  return data;
+  return result.json();
 }
 
 export async function getProductById(productId) {
   const result = await fetch(`https://api.mercadolibre.com/items/${productId}`);
   return result.json();
+}
+
+export async function setCart(cart) {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+export async function getCart() {
+  return JSON.parse(localStorage.getItem('cart'));
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
+import { getCategories, getProductsFromCategoryAndQuery, setCart } from '../services/api';
 
 class SearchHome extends Component {
   constructor() {
@@ -9,6 +9,7 @@ class SearchHome extends Component {
       searchValue: '',
       listItems: [],
       listProducts: [],
+      listCart: [],
     };
   }
 
@@ -44,6 +45,8 @@ class SearchHome extends Component {
 
   redirect = () => {
     const { history } = this.props;
+    const { listCart } = this.state;
+    setCart(listCart);
     history.push('/shoppingcart');
   };
 
@@ -51,6 +54,29 @@ class SearchHome extends Component {
     const { history } = this.props;
     const { target: { name } } = e;
     history.push(`/details/${name} `);
+  };
+
+  // Requisito 8 - Adiciona o produto ao state (listCart) pelo id (do produto) vindo do botão. Este
+  // state poderá ser passado para o componente do carrinho com a finalidade de montar a ser exibida
+  // dentro do componente (ShoppingCart).
+  addToCart = async (e) => {
+    const { target: { name } } = e;
+    const { title, price, thumbnail } = await this.mountCartProduct(name);
+    console.log(title);
+    console.log(price);
+    console.log(thumbnail);
+    this.setState((prevState) => (
+      { listCart: [...prevState.listCart, { name, title, price, thumbnail }] }
+    ));
+  };
+
+  // Requisito 8 - Monta o objeto a ser inserido no estado, evitando nova requisição da api no carrinho.
+  // Dessa forma, tem-se os dados do produto que precisam ser exibidos no carrinho dentro de um único
+  // objeto a ser passado via props para o componente do carrinho. Faltando apenas computar a quantida
+  // de do produto.
+  mountCartProduct = async (productId) => {
+    const { listProducts } = this.state;
+    return listProducts.filter((product) => product.id === productId)[0];
   };
 
   render() {
@@ -66,7 +92,7 @@ class SearchHome extends Component {
             type="text"
             name="searchValue"
             id="search"
-            velue={ searchValue }
+            value={ searchValue }
             onChange={ this.handleInput }
             data-testid="query-input"
           />
@@ -102,7 +128,7 @@ class SearchHome extends Component {
                   >
                     <span>{product.title}</span>
                     <img src={ product.thumbnail } alt="foto produto" />
-                    <span>{product.price}</span>
+                    <span>{ `R$ ${product.price}` }</span>
                     <button
                       type="button"
                       name={ product.id }
@@ -110,6 +136,14 @@ class SearchHome extends Component {
                       data-testid="product-detail-link"
                     >
                       Detalhes...
+                    </button>
+                    <button
+                      type="button"
+                      name={ product.id }
+                      onClick={ this.addToCart }
+                      data-testid="product-add-to-cart"
+                    >
+                      Adicionar ao carrinho!
                     </button>
                   </div>
                 ))}
