@@ -28,7 +28,13 @@ class SearchHome extends Component {
     this.setState({
       listProducts: getProducts.results,
     });
-    console.log(getProducts);
+  };
+
+  // Requisito 6
+  handleBtnCategoryClick = async (e) => {
+    const { target } = e;
+    const { results } = await getProductsFromCategoryAndQuery(target.id, '');
+    this.setState({ listProducts: results });
   };
 
   handleInput = (event) => {
@@ -38,12 +44,21 @@ class SearchHome extends Component {
 
   redirect = () => {
     const { history } = this.props;
-    console.log(history);
     history.push('/shoppingcart');
   };
 
+  redirectDetails = (e) => {
+    const { history } = this.props;
+    const { target: { name } } = e;
+    history.push(`/details/${name} `);
+  };
+
   render() {
-    const { searchValue, listItems, listProducts } = this.state;
+    const {
+      searchValue,
+      listItems,
+      listProducts,
+    } = this.state;
     return (
       <div>
         <label htmlFor="search">
@@ -62,18 +77,40 @@ class SearchHome extends Component {
           onClick={ this.handleSearchBtn }
         >
           Pesquisar
-
         </button>
+        <div>
+          {listItems.map((list, index) => (
+            <button
+              key={ index }
+              id={ list.id }
+              type="button"
+              data-testid="category"
+              onClick={ this.handleBtnCategoryClick }
+            >
+              {list.name}
+            </button>
+          ))}
+        </div>
         <div>
           {listProducts.length === 0 ? <p>Nenhum produto foi encontrado</p>
             : (
-
               <div>
                 {listProducts.map((product, index) => (
-                  <div data-testid="product" key={ index }>
+                  <div
+                    data-testid="product"
+                    key={ index }
+                  >
                     <span>{product.title}</span>
                     <img src={ product.thumbnail } alt="foto produto" />
                     <span>{product.price}</span>
+                    <button
+                      type="button"
+                      name={ product.id }
+                      onClick={ this.redirectDetails }
+                      data-testid="product-detail-link"
+                    >
+                      Detalhes...
+                    </button>
                   </div>
                 ))}
               </div>
@@ -83,7 +120,6 @@ class SearchHome extends Component {
         && (
           <h4 data-testid="home-initial-message">
             Digite algum termo de pesquisa ou escolha uma categoria.
-
           </h4>)}
         <button
           data-testid="shopping-cart-button"
@@ -92,16 +128,6 @@ class SearchHome extends Component {
         >
           Carrinho
         </button>
-        {listItems.map((list, index) => (
-          <button
-            key={ index }
-            type="button"
-            data-testid="category"
-          >
-            {list.name}
-
-          </button>
-        ))}
       </div>
     );
   }
