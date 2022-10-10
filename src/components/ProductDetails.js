@@ -31,8 +31,8 @@ class ProductDetails extends React.Component {
   addToCart = () => {
     const { product: { id, title, price, thumbnail } } = this.state;
     let listCart = getCart();
-    if (listCart !== null ) {
-      listCart = [ ...listCart, { name: id, title, price, thumbnail }];
+    if (listCart !== null) {
+      listCart = [...listCart, { name: id, title, price, thumbnail }];
     } else {
       listCart = [{ name: id, title, price, thumbnail }];
     }
