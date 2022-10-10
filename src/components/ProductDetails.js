@@ -1,6 +1,6 @@
 import React from 'react';
 import Proptypes from 'prop-types';
-import { getProductById } from '../services/api';
+import { getCart, getProductById, setCart } from '../services/api';
 
 class ProductDetails extends React.Component {
   state = {
@@ -27,6 +27,18 @@ class ProductDetails extends React.Component {
     history.push('/shoppingcart');
   };
 
+  // Requisito 9
+  addToCart = () => {
+    const { product: { id, title, price, thumbnail } } = this.state;
+    let listCart = getCart();
+    if (listCart !== null) {
+      listCart = [...listCart, { name: id, title, price, thumbnail }];
+    } else {
+      listCart = [{ name: id, title, price, thumbnail }];
+    }
+    setCart(listCart);
+  };
+
   render() {
     const { product } = this.state;
     return (
@@ -42,10 +54,17 @@ class ProductDetails extends React.Component {
         <span data-testid="product-detail-price">{ product.price }</span>
         <button
           type="button"
+          data-testid="product-detail-add-to-cart"
+          onClick={ this.addToCart }
+        >
+          Adicionar ao carrinho...
+        </button>
+        <button
+          type="button"
           data-testid="shopping-cart-button"
           onClick={ this.redirect }
         >
-          Adicionar ao carrinho...
+          Ver meu carrinho...
         </button>
       </div>
     );
