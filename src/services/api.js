@@ -32,3 +32,11 @@ export function getCart() {
 export function setCart(cart) {
   localStorage.setItem('cart', JSON.stringify(cart));
 }
+
+export function getReviews(productId) {
+  return JSON.parse(localStorage.getItem(productId));
+}
+
+export function setReviews(productId, reviews) {
+  localStorage.setItem(productId, JSON.stringify(reviews));
+}

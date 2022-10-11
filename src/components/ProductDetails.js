@@ -1,15 +1,32 @@
 import React from 'react';
 import Proptypes from 'prop-types';
-import { getCart, getProductById, setCart } from '../services/api';
+import {
+  getCart,
+  getProductById,
+  getReviews,
+  setCart,
+  setReviews,
+} from '../services/api';
 
 class ProductDetails extends React.Component {
   state = {
     product: {},
+    protoReview: {
+      avaliacao: '',
+      email: '',
+      rating: '',
+    },
+    reviews: [],
+    formError: false,
   };
 
   async componentDidMount() {
     const result = await getProductById(await this.getProductIdFromProps());
-    this.setState({ product: result });
+    let reviews = await getReviews(result.id);
+    if (reviews === null) {
+      reviews = [];
+    }
+    this.setState({ product: result, reviews });
   }
 
   getProductIdFromProps = async () => {
@@ -39,8 +56,62 @@ class ProductDetails extends React.Component {
     setCart(listCart);
   };
 
+  // Requisito 11
+  handleFormChanges = (e) => {
+    const { target: { name, value } } = e;
+    this.setState((prev) => ({
+      protoReview: { ...prev.protoReview, [name]: value },
+      formError: false,
+    }));
+  };
+
+  handleReviewBtn = () => {
+    const { product: { id }, protoReview } = this.state;
+    if (!this.verifyProtoReview(protoReview)) {
+      this.setState({
+        formError: true,
+        // protoReview: this.getBlankProtoReview(),
+      });
+      return;
+    }
+    this.setState({ formError: false });
+    this.setState((prev) => ({
+      reviews: [...prev.reviews, protoReview],
+    }));
+    const { reviews } = this.state;
+    setReviews(id, reviews);
+    this.setState({
+      protoReview: this.getBlankProtoReview(),
+    }, () => console.log(this.state));
+  };
+
+  verifyProtoReview = (protoReview) => {
+    if ((protoReview.email === undefined) || (protoReview.email === '')) {
+      return false;
+    }
+    if ((protoReview.rating === undefined) || (protoReview.rating === '')) {
+      return false;
+    }
+    const regexFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regexFilter.test(protoReview.email);
+  };
+
+  getBlankProtoReview = () => ({
+    avaliacao: '',
+    email: '',
+    rating: '',
+  });
+
   render() {
-    const { product } = this.state;
+    const {
+      product,
+      formError,
+      reviews,
+      protoReview: {
+        email,
+        avaliacao,
+        rating,
+      } } = this.state;
     return (
       <div
         data-testid="product"
@@ -66,6 +137,98 @@ class ProductDetails extends React.Component {
         >
           Ver meu carrinho...
         </button>
+        <form onChange={ this.handleFormChanges }>
+          <label htmlFor="review-group">
+            Avaliação
+            <fieldset id="review-group">
+              <input
+                type="radio"
+                id="1"
+                value="1"
+                name="rating"
+                data-testid="1-rating"
+                checked={ rating === '1' }
+              />
+              1
+              <input
+                type="radio"
+                id="2"
+                value="2"
+                name="rating"
+                data-testid="2-rating"
+                checked={ rating === '2' }
+              />
+              2
+              <input
+                type="radio"
+                id="3"
+                value="3"
+                name="rating"
+                data-testid="3-rating"
+                checked={ rating === '3' }
+              />
+              3
+              <input
+                type="radio"
+                id="4"
+                value="4"
+                name="rating"
+                data-testid="4-rating"
+                checked={ rating === '4' }
+              />
+              4
+              <input
+                type="radio"
+                id="5"
+                value="5"
+                name="rating"
+                data-testid="5-rating"
+                checked={ rating === '5' }
+              />
+              5
+            </fieldset>
+          </label>
+          <label htmlFor="email">
+            E-mail
+            <input
+              data-testid="product-detail-email"
+              id="email"
+              type="text"
+              name="email"
+              value={ email }
+            />
+          </label>
+          <label htmlFor="avaliacao">
+            Comentários
+            <textarea
+              data-testid="product-detail-evaluation"
+              id="avaliacao"
+              name="avaliacao"
+              value={ avaliacao }
+            />
+          </label>
+          <button
+            type="button"
+            data-testid="submit-review-btn"
+            onClick={ this.handleReviewBtn }
+          >
+            Avaliar
+          </button>
+        </form>
+        { formError
+          ? <p data-testid="error-msg">Campos inválidos</p>
+          : null}
+        { reviews.length > 0
+          && reviews.map((review, index) => (
+            <div
+              data-testid="product"
+              key={ index }
+            >
+              <span data-testid="review-card-email">{ review.email }</span>
+              <span data-testid="review-card-rating">{ review.rating }</span>
+              <span data-testid="review-card-evaluation">{ review.avaliacao }</span>
+            </div>
+          ))}
       </div>
     );
   }

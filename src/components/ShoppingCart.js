@@ -63,6 +63,7 @@ class ShoppingCart extends React.Component {
 
   render() {
     const { cart } = this.state;
+    console.log(cart);
     return (
       <div>
         { (cart.length > 0)
