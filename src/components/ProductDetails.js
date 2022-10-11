@@ -1,6 +1,6 @@
 import React from 'react';
 import Proptypes from 'prop-types';
-import { getCart, getProductById, getReviews, setCart } from '../services/api';
+import {getCart, getProductById, getReviews, setCart, setReviews} from '../services/api';
 
 class ProductDetails extends React.Component {
   state = {
@@ -59,6 +59,8 @@ class ProductDetails extends React.Component {
     await this.setState((prev) => ({
       reviews: [...prev.reviews, protoReview],
     }), () => console.log(this.state));
+    const { reviews } = this.state;
+    setReviews(product.id, reviews);
   };
 
   render() {

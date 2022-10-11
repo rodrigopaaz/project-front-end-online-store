@@ -37,6 +37,6 @@ export function getReviews() {
   return JSON.parse(localStorage.getItem('reviews'));
 }
 
-export function setReviews(reviews) {
-  localStorage.setItem('reviews', JSON.stringify(reviews));
+export function setReviews(productId, reviews) {
+  localStorage.setItem(productId, JSON.stringify(reviews));
 }
