@@ -1,4 +1,3 @@
-import { object } from 'prop-types';
 import React from 'react';
 import { getCart, setCart } from '../services/api';
 
@@ -9,10 +8,6 @@ class ShoppingCart extends React.Component {
 
   componentDidMount() {
     this.setState({ cart: this.getUniqueItems() });
-  }
-
-  componentDidUpdate() {
-   // this.setState({ cart: this.getUniqueItems() });
   }
 
   getUniqueItems = () => {
@@ -32,15 +27,39 @@ class ShoppingCart extends React.Component {
   };
 
   increaseProduct = ({ target }) => {
-    const{ name } = target
-    const lista = getCart() 
-   const product = lista.find((product) => product.title === name)
-  const lista2 =[...lista, { name: product.name, title: product.title, price: product.price, thumbnail: product.thumbnail }]
-  setCart(lista2) 
-  this.setState({ cart: this.getUniqueItems() });
-  //console.log(lista)
-  //console.log(lista2)
-  }
+    const { name } = target;
+    const lista = getCart();
+    const product = lista.find((item) => item.title === name);
+    const lista2 = [...lista, { name: product.name,
+      title: product.title,
+      price: product.price,
+      thumbnail: product.thumbnail }];
+    setCart(lista2);
+    this.setState({ cart: this.getUniqueItems() });
+  // console.log(lista)
+  // console.log(lista2)
+  };
+
+  decreaseProduct = ({ target }) => {
+    const { name } = target;
+    const lista = getCart();
+    const diferentProduct = lista.filter((item) => item.title !== name);
+    let equalProduct = (lista.filter((item) => item.title === name));
+    if (equalProduct.length > 1) {
+      equalProduct = (lista.filter((item) => item.title === name)).slice(1);
+      const removeFromLocalStorage = [...equalProduct, ...diferentProduct];
+      setCart(removeFromLocalStorage);
+      this.setState({ cart: this.getUniqueItems() });
+    }
+  };
+
+  removeProduct = ({ target }) => {
+    const { name } = target;
+    const lista = getCart();
+    const diferentProduct = lista.filter((item) => item.title !== name);
+    setCart(diferentProduct);
+    this.setState({ cart: this.getUniqueItems() });
+  };
 
   render() {
     const { cart } = this.state;
@@ -52,19 +71,39 @@ class ShoppingCart extends React.Component {
               data-testid="product"
               key={ index }
             >
-              <button type="button" data-testid="remove-product">X</button>
+              <button
+                type="button"
+                data-testid="remove-product"
+                name={ product.title }
+                onClick={ this.removeProduct }
+              >
+                X
+
+              </button>
               <span data-testid="shopping-cart-product-name">{product.title}</span>
               <img src={ product.thumbnail } alt="foto produto" />
               <span>{ `R$ ${product.price}` }</span>
-              <button data-testid="product-decrease-quantity">remover</button>
+              <button
+                data-testid="product-decrease-quantity"
+                name={ product.title }
+                onClick={ this.decreaseProduct }
+                type="button"
+              >
+                remover
+
+              </button>
               <span data-testid="shopping-cart-product-quantity">
                 { `Un: ${product.unit}` }
               </span>
-              <button 
-              name={ product.title }
-              data-testid="product-increase-quantity"
-              onClick={ this.increaseProduct }
-              >adicionar</button>
+              <button
+                name={ product.title }
+                data-testid="product-increase-quantity"
+                onClick={ this.increaseProduct }
+                type="button"
+              >
+                adicionar
+
+              </button>
             </div>
           ))
           : <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>}
