@@ -11,7 +11,11 @@ import {
 class ProductDetails extends React.Component {
   state = {
     product: {},
-    protoReview: {},
+    protoReview: {
+      avaliacao: '',
+      email: '',
+      rating: '',
+    },
     reviews: [],
     formError: false,
   };
@@ -53,40 +57,50 @@ class ProductDetails extends React.Component {
   };
 
   // Requisito 11
-  handleFormChanges = async (e) => {
+  handleFormChanges = (e) => {
     const { target: { name, value } } = e;
-    await this.setState((prev) => ({
+    this.setState((prev) => ({
       protoReview: { ...prev.protoReview, [name]: value },
+      formError: false,
     }));
   };
 
-  handleReviewBtn = async () => {
+  handleReviewBtn = () => {
     const { product: { id }, protoReview } = this.state;
     if (!this.verifyProtoReview(protoReview)) {
-      this.setState({ formError: true });
+      this.setState({
+        formError: true,
+        // protoReview: this.getBlankProtoReview(),
+      });
       return;
     }
     this.setState({ formError: false });
-    await this.setState((prev) => ({
+    this.setState((prev) => ({
       reviews: [...prev.reviews, protoReview],
     }));
     const { reviews } = this.state;
     setReviews(id, reviews);
+    this.setState({
+      protoReview: this.getBlankProtoReview(),
+    }, () => console.log(this.state));
   };
 
   verifyProtoReview = (protoReview) => {
-    if (!Object.prototype.hasOwnProperty.call(protoReview, 'avaliacao')) {
+    if ((protoReview.email === undefined) || (protoReview.email === '')) {
       return false;
     }
-    if (!Object.prototype.hasOwnProperty.call(protoReview, 'rating')) {
-      return false;
-    }
-    if (!Object.prototype.hasOwnProperty.call(protoReview, 'email')) {
+    if ((protoReview.rating === undefined) || (protoReview.rating === '')) {
       return false;
     }
     const regexFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     return regexFilter.test(protoReview.email);
   };
+
+  getBlankProtoReview = () => ({
+    avaliacao: '',
+    email: '',
+    rating: '',
+  });
 
   render() {
     const {
@@ -127,15 +141,50 @@ class ProductDetails extends React.Component {
           <label htmlFor="review-group">
             Avaliação
             <fieldset id="review-group">
-              <input type="radio" id="1" value="1" name="rating" data-testid="1-rating" />
+              <input
+                type="radio"
+                id="1"
+                value="1"
+                name="rating"
+                data-testid="1-rating"
+                checked={ rating === '1' }
+              />
               1
-              <input type="radio" id="2" value="2" name="rating" data-testid="2-rating" />
+              <input
+                type="radio"
+                id="2"
+                value="2"
+                name="rating"
+                data-testid="2-rating"
+                checked={ rating === '2' }
+              />
               2
-              <input type="radio" id="3" value="3" name="rating" data-testid="3-rating" />
+              <input
+                type="radio"
+                id="3"
+                value="3"
+                name="rating"
+                data-testid="3-rating"
+                checked={ rating === '3' }
+              />
               3
-              <input type="radio" id="4" value="4" name="rating" data-testid="4-rating" />
+              <input
+                type="radio"
+                id="4"
+                value="4"
+                name="rating"
+                data-testid="4-rating"
+                checked={ rating === '4' }
+              />
               4
-              <input type="radio" id="5" value="5" name="rating" data-testid="5-rating" />
+              <input
+                type="radio"
+                id="5"
+                value="5"
+                name="rating"
+                data-testid="5-rating"
+                checked={ rating === '5' }
+              />
               5
             </fieldset>
           </label>
@@ -146,6 +195,7 @@ class ProductDetails extends React.Component {
               id="email"
               type="text"
               name="email"
+              value={ email }
             />
           </label>
           <label htmlFor="avaliacao">
@@ -154,6 +204,7 @@ class ProductDetails extends React.Component {
               data-testid="product-detail-evaluation"
               id="avaliacao"
               name="avaliacao"
+              value={ avaliacao }
             />
           </label>
           <button
@@ -164,7 +215,9 @@ class ProductDetails extends React.Component {
             Avaliar
           </button>
         </form>
-        { formError && <p data-testid="error-msg">Campos inválidos</p>}
+        { formError
+          ? <p data-testid="error-msg">Campos inválidos</p>
+          : null}
         { reviews.length > 0
           && reviews.map((review, index) => (
             <div
