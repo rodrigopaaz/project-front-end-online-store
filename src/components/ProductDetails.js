@@ -1,6 +1,12 @@
 import React from 'react';
 import Proptypes from 'prop-types';
-import {getCart, getProductById, getReviews, setCart, setReviews} from '../services/api';
+import {
+  getCart,
+  getProductById,
+  getReviews,
+  setCart,
+  setReviews,
+} from '../services/api';
 
 class ProductDetails extends React.Component {
   state = {
@@ -12,7 +18,7 @@ class ProductDetails extends React.Component {
 
   async componentDidMount() {
     const result = await getProductById(await this.getProductIdFromProps());
-    let reviews = await getReviews();
+    let reviews = await getReviews(result.id);
     if (reviews === null) {
       reviews = [];
     }
@@ -48,23 +54,50 @@ class ProductDetails extends React.Component {
 
   // Requisito 11
   handleFormChanges = async (e) => {
-    const { target } = e;
+    const { target: { name, value } } = e;
     await this.setState((prev) => ({
-      protoReview: { ...prev.protoReview, [target.name]: target.value },
-    }), () => console.log(this.state));
+      protoReview: { ...prev.protoReview, [name]: value },
+    }));
   };
 
   handleReviewBtn = async () => {
-    const { product, protoReview } = this.state;
+    const { product: { id }, protoReview } = this.state;
+    if (!this.verifyProtoReview(protoReview)) {
+      this.setState({ formError: true });
+      return;
+    }
+    this.setState({ formError: false });
     await this.setState((prev) => ({
       reviews: [...prev.reviews, protoReview],
-    }), () => console.log(this.state));
+    }));
     const { reviews } = this.state;
-    setReviews(product.id, reviews);
+    setReviews(id, reviews);
+  };
+
+  verifyProtoReview = (protoReview) => {
+    if (!Object.prototype.hasOwnProperty.call(protoReview, 'avaliacao')) {
+      return false;
+    }
+    if (!Object.prototype.hasOwnProperty.call(protoReview, 'rating')) {
+      return false;
+    }
+    if (!Object.prototype.hasOwnProperty.call(protoReview, 'email')) {
+      return false;
+    }
+    const regexFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regexFilter.test(protoReview.email);
   };
 
   render() {
-    const { product, formError, reviews } = this.state;
+    const {
+      product,
+      formError,
+      reviews,
+      protoReview: {
+        email,
+        avaliacao,
+        rating,
+      } } = this.state;
     return (
       <div
         data-testid="product"
