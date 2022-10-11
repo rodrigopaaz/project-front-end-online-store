@@ -1,15 +1,22 @@
 import React from 'react';
 import Proptypes from 'prop-types';
-import { getCart, getProductById, setCart } from '../services/api';
+import { getCart, getProductById, getReviews, setCart } from '../services/api';
 
 class ProductDetails extends React.Component {
   state = {
     product: {},
+    protoReview: {},
+    reviews: [],
+    formError: false,
   };
 
   async componentDidMount() {
     const result = await getProductById(await this.getProductIdFromProps());
-    this.setState({ product: result });
+    let reviews = await getReviews();
+    if (reviews === null) {
+      reviews = [];
+    }
+    this.setState({ product: result, reviews });
   }
 
   getProductIdFromProps = async () => {
@@ -39,8 +46,23 @@ class ProductDetails extends React.Component {
     setCart(listCart);
   };
 
+  // Requisito 11
+  handleFormChanges = async (e) => {
+    const { target } = e;
+    await this.setState((prev) => ({
+      protoReview: { ...prev.protoReview, [target.name]: target.value },
+    }), () => console.log(this.state));
+  };
+
+  handleReviewBtn = async () => {
+    const { product, protoReview } = this.state;
+    await this.setState((prev) => ({
+      reviews: [...prev.reviews, protoReview],
+    }), () => console.log(this.state));
+  };
+
   render() {
-    const { product } = this.state;
+    const { product, formError, reviews } = this.state;
     return (
       <div
         data-testid="product"
@@ -66,6 +88,59 @@ class ProductDetails extends React.Component {
         >
           Ver meu carrinho...
         </button>
+        <form onChange={ this.handleFormChanges }>
+          <label htmlFor="review-group">
+            Avaliação
+            <fieldset id="review-group">
+              <input type="radio" id="1" value="1" name="rating" data-testid="1-rating" />
+              1
+              <input type="radio" id="2" value="2" name="rating" data-testid="2-rating" />
+              2
+              <input type="radio" id="3" value="3" name="rating" data-testid="3-rating" />
+              3
+              <input type="radio" id="4" value="4" name="rating" data-testid="4-rating" />
+              4
+              <input type="radio" id="5" value="5" name="rating" data-testid="5-rating" />
+              5
+            </fieldset>
+          </label>
+          <label htmlFor="email">
+            E-mail
+            <input
+              data-testid="product-detail-email"
+              id="email"
+              type="text"
+              name="email"
+            />
+          </label>
+          <label htmlFor="avaliacao">
+            Comentários
+            <textarea
+              data-testid="product-detail-evaluation"
+              id="avaliacao"
+              name="avaliacao"
+            />
+          </label>
+          <button
+            type="button"
+            data-testid="submit-review-btn"
+            onClick={ this.handleReviewBtn }
+          >
+            Avaliar
+          </button>
+        </form>
+        { formError && <p data-testid="error-msg">Campos inválidos</p>}
+        { reviews.length > 0
+          && reviews.map((review, index) => (
+            <div
+              data-testid="product"
+              key={ index }
+            >
+              <span data-testid="review-card-email">{ review.email }</span>
+              <span data-testid="review-card-rating">{ review.rating }</span>
+              <span data-testid="review-card-evaluation">{ review.avaliacao }</span>
+            </div>
+          ))}
       </div>
     );
   }
