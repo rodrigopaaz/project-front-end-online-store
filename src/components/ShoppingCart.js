@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { getCart, setCart } from '../services/api';
 
 class ShoppingCart extends React.Component {
@@ -36,8 +37,11 @@ class ShoppingCart extends React.Component {
       thumbnail: product.thumbnail }];
     setCart(lista2);
     this.setState({ cart: this.getUniqueItems() });
-  // console.log(lista)
-  // console.log(lista2)
+  };
+
+  finalizePurchase = () => {
+    const { history } = this.props;
+    return history.push('/checkout');
   };
 
   decreaseProduct = ({ target }) => {
@@ -63,7 +67,6 @@ class ShoppingCart extends React.Component {
 
   render() {
     const { cart } = this.state;
-    console.log(cart);
     return (
       <div>
         { (cart.length > 0)
@@ -108,9 +111,20 @@ class ShoppingCart extends React.Component {
             </div>
           ))
           : <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>}
+        <button
+          type="button"
+          data-testid="checkout-products"
+          onClick={ this.finalizePurchase }
+        >
+          Finalizar Compra
+
+        </button>
       </div>
     );
   }
 }
+ShoppingCart.propTypes = ({
+  history: PropTypes.shape,
+}).isRequired;
 
 export default ShoppingCart;
