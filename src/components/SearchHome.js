@@ -73,7 +73,7 @@ class SearchHome extends Component {
       setCart(listCart);
     };
     this.setState((prev) => ({
-      listCart: [...prev.listCart, { name, title, price, thumbnail, availableQuantity }],// eslint-disable-line
+      listCart: [...prev.listCart, { name, title, price, thumbnail, availableQuantity }],
     }), setLocalStorage);
   };
 
