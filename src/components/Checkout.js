@@ -79,7 +79,7 @@ class Checkout extends Component {
   };
 
   render() {
-    const { cart, isValid } = this.state;
+    const { cart, isValid, name, phone, email, cpf, cep, address, payment } = this.state;
     return (
       <div>
         <div>
@@ -100,6 +100,8 @@ class Checkout extends Component {
               data-testid="checkout-fullname"
               type="text"
               required
+              value={ name }
+              placeholder="Insira seu nome completo"
               onChange={ this.handleChange }
             />
           </label>
@@ -111,6 +113,8 @@ class Checkout extends Component {
               data-testid="checkout-email"
               type="text"
               required
+              value={ email }
+              placeholder="Insira seu email"
               onChange={ this.handleChange }
             />
           </label>
@@ -122,6 +126,8 @@ class Checkout extends Component {
               data-testid="checkout-cpf"
               type="text"
               required
+              value={ cpf }
+              placeholder="Insira seu CPF"
               onChange={ this.handleChange }
             />
           </label>
@@ -133,6 +139,8 @@ class Checkout extends Component {
               data-testid="checkout-phone"
               type="text"
               required
+              value={ phone }
+              placeholder="Insira seu Telefone para contato"
               onChange={ this.handleChange }
             />
           </label>
@@ -144,6 +152,8 @@ class Checkout extends Component {
               data-testid="checkout-cep"
               type="text"
               required
+              value={ cep }
+              placeholder="Insira seu CEP"
               onChange={ this.handleChange }
             />
           </label>
@@ -155,6 +165,8 @@ class Checkout extends Component {
               data-testid="checkout-address"
               type="text"
               required
+              value={ address }
+              placeholder="Insira seu nome endereço"
               onChange={ this.handleChange }
             />
           </label>
