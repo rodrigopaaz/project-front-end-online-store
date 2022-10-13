@@ -67,13 +67,13 @@ class SearchHome extends Component {
   // dentro do componente (ShoppingCart).
   addToCart = (e) => {
     const { target: { name } } = e;
-    const { title, price, thumbnail } = this.mountCartProduct(name);
+    const { title, price, thumbnail, available_quantity } = this.mountCartProduct(name); // eslint-disable-line
     const setLocalStorage = () => {
       const { listCart } = this.state;
       setCart(listCart);
     };
     this.setState((prev) => ({
-      listCart: [...prev.listCart, { name, title, price, thumbnail }],
+      listCart: [...prev.listCart, { name, title, price, thumbnail, available_quantity }],// eslint-disable-line
     }), setLocalStorage);
   };
 

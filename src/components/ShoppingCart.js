@@ -28,13 +28,23 @@ class ShoppingCart extends React.Component {
   };
 
   increaseProduct = ({ target }) => {
+    const { cart } = this.state;
+    console.log(cart);
     const { name } = target;
     const lista = getCart();
+    let lista2 = [];
     const product = lista.find((item) => item.title === name);
-    const lista2 = [...lista, { name: product.name,
-      title: product.title,
-      price: product.price,
-      thumbnail: product.thumbnail }];
+    const productLength = lista.filter((item) => item.title === name);
+    if (productLength.length < product.available_quantity) {
+      lista2 = [...lista, { name: product.name,
+        title: product.title,
+        price: product.price,
+        thumbnail: product.thumbnail,
+        available_quantity: product.available_quantity,
+      }];
+    } else {
+      lista2 = lista;
+    }
     setCart(lista2);
     this.setState({ cart: this.getUniqueItems() });
   };
