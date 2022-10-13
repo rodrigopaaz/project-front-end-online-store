@@ -35,12 +35,12 @@ class Checkout extends Component {
   getItems = () => {
     const cartUpdate = [];
     const cart2 = getCart();
-    cart2.forEach((elemento) => {
-      cartUpdate.find((element) => element.name === elemento.name)
-        ? null
-        : cartUpdate.push(elemento);
+    return cart2.forEach((elemento) => {
+      if (!cartUpdate.find((element) => element.name === elemento.name)) {
+        cartUpdate.push(elemento);
+        this.setState({ cart: cartUpdate });
+      }
     });
-    this.setState({ cart: cartUpdate });
   };
 
   checkInputs = () => {
