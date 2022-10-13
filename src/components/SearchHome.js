@@ -11,6 +11,7 @@ class SearchHome extends Component {
       listItems: [],
       listProducts: [],
       listCart: [],
+      cartLength: (getCart() !== null ? getCart().length : 0),
     };
   }
 
@@ -74,6 +75,7 @@ class SearchHome extends Component {
     };
     this.setState((prev) => ({
       listCart: [...prev.listCart, { name, title, price, thumbnail }],
+      cartLength: prev.cartLength + 1,
     }), setLocalStorage);
   };
 
@@ -91,6 +93,7 @@ class SearchHome extends Component {
       searchValue,
       listItems,
       listProducts,
+      cartLength,
     } = this.state;
     return (
       <div>
@@ -168,6 +171,7 @@ class SearchHome extends Component {
           type="button"
         >
           Carrinho
+          <span data-testid="shopping-cart-size">{ ` - ${cartLength}` }</span>
         </button>
       </div>
     );

@@ -5,6 +5,7 @@ import { getCart, getProductById, setCart } from '../services/api';
 class ProductDetails extends React.Component {
   state = {
     product: {},
+    cartLength: (getCart() !== null ? getCart().length : 0),
   };
 
   async componentDidMount() {
@@ -36,11 +37,14 @@ class ProductDetails extends React.Component {
     } else {
       listCart = [{ name: id, title, price, thumbnail }];
     }
+    this.setState((prev) => ({
+      cartLength: prev.cartLength + 1,
+    }));
     setCart(listCart);
   };
 
   render() {
-    const { product } = this.state;
+    const { product, cartLength } = this.state;
     return (
       <div
         data-testid="product"
@@ -65,6 +69,7 @@ class ProductDetails extends React.Component {
           onClick={ this.redirect }
         >
           Ver meu carrinho...
+          <span data-testid="shopping-cart-size">{ ` - ${cartLength}` }</span>
         </button>
       </div>
     );
