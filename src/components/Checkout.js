@@ -79,7 +79,7 @@ class Checkout extends Component {
   };
 
   render() {
-    const { cart, isValid, name, phone, email, cpf, cep, address, payment } = this.state;
+    const { cart, isValid, name, phone, email, cpf, cep, address } = this.state;
     return (
       <div>
         <div>
