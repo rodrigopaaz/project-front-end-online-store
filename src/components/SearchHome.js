@@ -67,13 +67,13 @@ class SearchHome extends Component {
   // dentro do componente (ShoppingCart).
   addToCart = (e) => {
     const { target: { name } } = e;
-    const { title, price, thumbnail, available_quantity } = this.mountCartProduct(name); // eslint-disable-line
+    const { title, price, thumbnail, availableQuantity } = this.mountCartProduct(name);
     const setLocalStorage = () => {
       const { listCart } = this.state;
       setCart(listCart);
     };
     this.setState((prev) => ({
-      listCart: [...prev.listCart, { name, title, price, thumbnail, available_quantity }],// eslint-disable-line
+      listCart: [...prev.listCart, { name, title, price, thumbnail, availableQuantity }],// eslint-disable-line
     }), setLocalStorage);
   };
 
@@ -83,7 +83,8 @@ class SearchHome extends Component {
   // de do produto.
   mountCartProduct = (productId) => {
     const { listProducts } = this.state;
-    return listProducts.filter((product) => product.id === productId)[0];
+    const prod = listProducts.filter((product) => product.id === productId)[0];
+    return { ...prod, availableQuantity: prod.available_quantity };
   };
 
   render() {

@@ -35,12 +35,12 @@ class ShoppingCart extends React.Component {
     let lista2 = [];
     const product = lista.find((item) => item.title === name);
     const productLength = lista.filter((item) => item.title === name);
-    if (productLength.length < product.available_quantity) {
+    if (productLength.length < product.availableQuantity) {
       lista2 = [...lista, { name: product.name,
         title: product.title,
         price: product.price,
         thumbnail: product.thumbnail,
-        available_quantity: product.available_quantity,
+        availableQuantity: product.availableQuantity,
       }];
     } else {
       lista2 = lista;
