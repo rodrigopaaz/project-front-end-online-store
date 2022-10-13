@@ -136,6 +136,12 @@ class SearchHome extends Component {
                     <span>{product.title}</span>
                     <img src={ product.thumbnail } alt="foto produto" />
                     <span>{ `R$ ${product.price}` }</span>
+                    {product.shipping.free_shipping && <span
+                      data-testid="free-shipping"
+                    >
+                      Frete Grátis
+
+                                                       </span>}
                     <button
                       type="button"
                       name={ product.id }
