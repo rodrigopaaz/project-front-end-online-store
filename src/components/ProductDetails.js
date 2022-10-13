@@ -45,7 +45,6 @@ class ProductDetails extends React.Component {
     history.push('/shoppingcart');
   };
 
-  // Requisito 9
   addToCart = () => {
     const { product: { id, title, price, thumbnail } } = this.state;
     let listCart = getCart();
@@ -60,7 +59,6 @@ class ProductDetails extends React.Component {
     setCart(listCart);
   };
 
-  // Requisito 11
   handleFormChanges = (e) => {
     const { target: { name, value } } = e;
     this.setState((prev) => ({
@@ -74,7 +72,6 @@ class ProductDetails extends React.Component {
     if (!this.verifyProtoReview(protoReview)) {
       this.setState({
         formError: true,
-        // protoReview: this.getBlankProtoReview(),
       });
       return;
     }
@@ -109,7 +106,6 @@ class ProductDetails extends React.Component {
   render() {
     const { product, cartLength } = this.state;
     const {
-      product,
       formError,
       reviews,
       protoReview: {
