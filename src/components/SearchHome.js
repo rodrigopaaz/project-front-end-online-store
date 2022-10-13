@@ -68,14 +68,14 @@ class SearchHome extends Component {
   // dentro do componente (ShoppingCart).
   addToCart = (e) => {
     const { target: { name } } = e;
-    const { title, price, thumbnail } = this.mountCartProduct(name);
+    const { title, price, thumbnail, availableQuantity } = this.mountCartProduct(name);
     const setLocalStorage = () => {
       const { listCart } = this.state;
       setCart(listCart);
     };
-    this.setState((prev) => ({
-      listCart: [...prev.listCart, { name, title, price, thumbnail }],
+    this.setState((prev) => ({      
       cartLength: prev.cartLength + 1,
+      listCart: [...prev.listCart, { name, title, price, thumbnail, availableQuantity }],
     }), setLocalStorage);
   };
 
@@ -85,7 +85,8 @@ class SearchHome extends Component {
   // de do produto.
   mountCartProduct = (productId) => {
     const { listProducts } = this.state;
-    return listProducts.filter((product) => product.id === productId)[0];
+    const prod = listProducts.filter((product) => product.id === productId)[0];
+    return { ...prod, availableQuantity: prod.available_quantity };
   };
 
   render() {
@@ -139,6 +140,13 @@ class SearchHome extends Component {
                     <span>{product.title}</span>
                     <img src={ product.thumbnail } alt="foto produto" />
                     <span>{ `R$ ${product.price}` }</span>
+                    {product.shipping.free_shipping && (
+                      <span
+                        data-testid="free-shipping"
+                      >
+                        Frete Grátis
+                      </span>
+                    )}
                     <button
                       type="button"
                       name={ product.id }
