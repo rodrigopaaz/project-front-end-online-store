@@ -73,7 +73,7 @@ class SearchHome extends Component {
       const { listCart } = this.state;
       setCart(listCart);
     };
-    this.setState((prev) => ({      
+    this.setState((prev) => ({
       cartLength: prev.cartLength + 1,
       listCart: [...prev.listCart, { name, title, price, thumbnail, availableQuantity }],
     }), setLocalStorage);
