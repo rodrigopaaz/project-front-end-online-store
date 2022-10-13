@@ -141,7 +141,6 @@ class SearchHome extends Component {
                         data-testid="free-shipping"
                       >
                         Frete Grátis
-
                       </span>
                     )}
                     <button
