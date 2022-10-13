@@ -11,6 +11,7 @@ import {
 class ProductDetails extends React.Component {
   state = {
     product: {},
+    cartLength: (getCart() !== null ? getCart().length : 0),
     protoReview: {
       avaliacao: '',
       email: '',
@@ -53,6 +54,9 @@ class ProductDetails extends React.Component {
     } else {
       listCart = [{ name: id, title, price, thumbnail }];
     }
+    this.setState((prev) => ({
+      cartLength: prev.cartLength + 1,
+    }));
     setCart(listCart);
   };
 
@@ -103,6 +107,7 @@ class ProductDetails extends React.Component {
   });
 
   render() {
+    const { product, cartLength } = this.state;
     const {
       product,
       formError,
@@ -136,6 +141,7 @@ class ProductDetails extends React.Component {
           onClick={ this.redirect }
         >
           Ver meu carrinho...
+          <span data-testid="shopping-cart-size">{ ` - ${cartLength}` }</span>
         </button>
         <form onChange={ this.handleFormChanges }>
           <label htmlFor="review-group">
