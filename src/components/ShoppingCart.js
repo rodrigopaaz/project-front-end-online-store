@@ -47,12 +47,18 @@ class ShoppingCart extends React.Component {
   decreaseProduct = ({ target }) => {
     const { name } = target;
     const lista = getCart();
-    const diferentProduct = lista.filter((item) => item.title !== name);
-    let equalProduct = (lista.filter((item) => item.title === name));
+    /*     const diferentProduct = lista.filter((item) => item.title !== name); */
+    const equalProduct = (lista.filter((item) => item.title === name));
     if (equalProduct.length > 1) {
-      equalProduct = (lista.filter((item) => item.title === name)).slice(1);
-      const removeFromLocalStorage = [...equalProduct, ...diferentProduct];
-      setCart(removeFromLocalStorage);
+      let check = 0;
+      lista.forEach((_, index) => {
+        const negative = (lista.length - 1) - index; // realiza a contagem do index do maior número para o menor.
+        if (lista[negative].title === name && check < lista.length) { // quando a condição entra no if, torna o valor do check igual ao tamanho do LISTA.
+          check = lista.length;
+          lista.splice(negative, 1); // Ao remover um item do lista a condição não será cumprida, encerrando assim o loop.
+        }
+      });
+      setCart(lista);
       this.setState({ cart: this.getUniqueItems() });
     }
   };
